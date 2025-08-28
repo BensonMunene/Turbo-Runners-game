@@ -1,3 +1,4 @@
+# New updated code
 import pygame
 import sys
 import random
@@ -191,11 +192,20 @@ class MovingPlatform(pygame.sprite.Sprite):
         self.color = FOREST_GREEN
 
     def update(self):
-        self.rect.x += self.speed * self.direction
-
-        # Reverse direction when reaching limits
-        if abs(self.rect.x - self.original_x) > self.range_limit:
+        # Check if we're about to exceed the range limit
+        new_x = self.rect.x + (self.speed * self.direction)
+        
+        if abs(new_x - self.original_x) > self.range_limit:
+            # Reverse direction before moving
             self.direction *= -1
+            # Clamp position to stay within range
+            if new_x > self.original_x + self.range_limit:
+                self.rect.x = self.original_x + self.range_limit
+            elif new_x < self.original_x - self.range_limit:
+                self.rect.x = self.original_x - self.range_limit
+        else:
+            # Safe to move
+            self.rect.x = new_x
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
